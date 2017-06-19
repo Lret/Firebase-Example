@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BoodschappenLijst</title>
+
+                                                    <!-- css -->
+
+    <!-- Bootstrap  Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Bootstrap Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Custom Css -->
+    <link rel="stylesheet" href="main.css">
+
+</head>
+<body>
+
+                                                     <!-- Html -->
+
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">
+                    <img alt="Brand" src="Img/BurningIconGray.png" height="46" width="auto">
+                </a>
+            </div>
+            <p id="firebaseTitle" style="color: darkgrey">
+                BurningDB
+            </p>
+            <!--<p id="firebaseUser" style="color: darkgrey; margin-top: 0px" >
+
+            </p>-->
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="col-sm-12">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">Product toevoegen</div>
+                        <div class="panel-body">
+                            <div class="navbar-form navbar-left">
+                                <div class="form-group">
+                                    <input id="inputText" type="text" class="form-control" placeholder="Product">
+                                    <input id="inputAmount" value="1" type="number" min="1" max="10" class="form-control">
+                                </div>
+                                <button id="submitBtn" onclick="submitClick()" class="btn btn-default">Add</button>
+                                <img src="" accept="image/*" alt="Drag your image here" class="imgThumbnail" id="imgContainer" ondrop="drop(event)" ondragover="allowDrop(event)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-primary">
+                        <div class="panel-heading" ondblclick="componentPanel.minimize.bind(this)()">
+                            <!-- on click change to input bar/ on focus -->
+                            Buieenradar
+                            <!--<button onclick="componentPanel.deletePanel(this)"></button>-->
+                        </div>
+                        <!--<div class="panel-body" ondrop="componentPanel.drop.bind(this)(event)" ondragover="allowDrop(event)">-->
+                        <div class="panel-body" id="buienradar">
+                            <!--
+                            <iframe src="https://www.buienradar.nl/#4c73ae97-8c14-4956-ac0a-651a2bb1b1e4" class="buien"></iframe>
+                            <IFRAME SRC="//gadgets.buienradar.nl/gadget/forecastandstation/6260" NORESIZE SCROLLING=NO HSPACE=0 VSPACE=0 FRAMEBORDER=0 MARGINHEIGHT=0 MARGINWIDTH=0 WIDTH=300 HEIGHT=190></IFRAME>
+                            -->
+                            <canvas id = "buienChart" width="400" height="400"></canvas>
+
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary center-content" type="button" onclick="componentPanel.createPanel(this, 'New Panel', 'example')">
+                        Add new Component <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+
+                    <!--
+                    <div class="form-group" style="color: darkgrey">
+                        <button type="button" class="btn btn-danger btn-circle btn-xl"><i class="glyphicon glyphicon-plus"></i></button>
+                            Add new Component
+                    </div>
+                    -->
+                </div>
+                <div class="col-sm-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">Boodschappen lijst</div>
+                        <!--<div class="panel-body" id="productPanel">-->
+                        <div class="panel-body">
+                            <!--<pre id="productPanel"></pre>-->
+                            <div id="productPanel"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                     <!-- Scripts -->
+
+
+    <!-- Handlebars -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.10/handlebars.js"></script>
+
+    <!--  Firebase   -->
+    <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
+    <script src = fbase.js></script>
+
+    <!-- Jquery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <!-- chart js -->
+
+                                                     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+
+   <!--  Custom Js   -->
+    <script src = index.js></script>
+    <script src = JavaScript/componentPanel.js></script>
+
+
+
+                                                     <!-- templates -->
+
+    <!-- Img block Product template-->
+    <script id="productTemplate" type="text/x-handlebars-template">
+        <div class="row">
+            <div class="col-sm-6 col-md-12">
+                {{#each BoodschappenLijst}}
+                    {{#NotEqual this.Amount 0}}
+                        <div class="thumbnail">
+                            <!--
+                            <img class="imgIcon" src={{this.Img}}>
+                            <img class="imgIcon" src={{#lastArray this.Img}} {{/lastArray}}>
+                            <img class="imgIcon" src={{#unpackFBaseImg this.Img}} {{/unpackFBaseImg}}>
+                            { { { imgSliderCreate this.Img } } }
+                            -->
+                            <img class="imgIcon" src={{unpackFBaseImg this.Img}}>
+                            <div class="caption">
+                                <h3>{{@key}}</h3>
+                                <p>Amount : {{this.Amount}}</p>
+                                <p>
+                                    <button class="btn btn-primary" role="button" id="DoneBtn" onclick="doneBtn('{{@key}}', this)">Done</button>
+                                    <button class="btn btn-default" role="button" id="EditBtn" onclick="editBtn('{{@key}}', '{{this.Amount}}', '{{unpackFBaseImg this.Img}}' )">Edit</button>
+                                </p>
+                            </div>
+                        </div>
+                    {{/NotEqual}}
+                {{/each}}
+            </div>
+        </div>
+    </script>
+
+    <!-- Img slider template -->
+    <script id="imgSliderTemplate" type="text/x-handlebars-template">
+     <div class="carousel slide">
+
+         <!-- Wrapper for slides -->
+         <div>
+             {{#each this}}
+
+             <div>
+                 <img src="{{this.Scr}}" alt="Los Angeles">
+             </div>
+             {{/each}}
+         </div>
+
+         <!-- Left and right controls -->
+         <a>
+             <span class="glyphicon glyphicon-chevron-left"></span>
+             <span class="sr-only">Previous</span>
+         </a>
+         <a>
+             <span class="glyphicon glyphicon-chevron-right"></span>
+             <span class="sr-only">Next</span>
+         </a>
+     </div>
+    </script>
+
+    <!-- Basic Component Panel -->
+    <script id="componentPanelTemplate" type="text/x-handlebars-template">
+     <!--<div class="panel panel-primary" ondrag="dragHtml(event)" draggable="true">-->
+     <div class="panel panel-primary">
+         <div class="panel-heading" ondblclick="componentPanel.minimize.bind(this)()">
+             <!-- on click change to input bar/ on focus -->
+             {{name}}
+             <!--<button onclick="componentPanel.deletePanel(this)"></button>-->
+         </div>
+         <!--<div class="panel-body" ondrop="componentPanel.drop.bind(this)(event)" ondragover="allowDrop(event)">-->
+         <div class="panel-body" ondrop="dropHtml(event)" ondragover="allowDrop(event)">
+             {{content}}
+         </div>
+     </div>
+    </script>
+
+</body>
+</html>
